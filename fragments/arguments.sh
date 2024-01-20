@@ -85,7 +85,8 @@ fi
 currentUser=$(scutil <<< "show State:/Users/ConsoleUser" | awk '/Name :/ { print $3 }')
 
 # NOTE: check for root
-if [[ "$(whoami)" != "root" && "$DEBUG" -eq 0 ]]; then
+# If installs in /tmp or in the user directory, root access is not required
+if [[ "$(whoami)" != "root" && "$DEBUG" -eq 0 ]] && ! $(echo "${targetDir}" | grep -e "^/tmp/" -e "^~" -e "^${HOME}" > /dev/null 2>&1); then
     # not running as root
     cleanupAndExit 6 "not running as root, exiting" ERROR
 fi
